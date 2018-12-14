@@ -67,12 +67,14 @@ def start_game():
     canv.bind('<ButtonRelease-1>', cannon_player1.fire_end)
     canv.bind('<Motion>', cannon_player1.targetting)
 
-    new_ball = Shell(canv, k)
-    while new_ball.live:
-        new_ball.move(700)
-        new_ball.set_coords()
+    while cannon_player1.balls:
+        for ball in cannon_player1.balls:
+            ball.move(700)
+            ball.set_coords()
         canv.update()
         time.sleep(0.02)
+
+
 
     mainloop()
 
