@@ -1,14 +1,22 @@
+from shell import *
 import math
 
 
 class Cannon():
-    def __init__(self, canv, x, y):
+    def __init__(self, canv, x, y, k):
         self.canvas = canv
         self.power = 10
         self.start = 0
+        self.on = 1
         self.angle = 1
-        self.carriage = self.canvas.create_oval(x-20, y-20, x+20, y+20, fill="black")
-        self.muzzle = self.canvas.create_line(x, y, x + 30, y + 40, width=5)
+        self.x = x
+        self.y = y
+        self.r = 20
+        self.l = 50
+        self.k = k
+        self.carriage = self.canvas.create_oval(self.x-self.r, self.y-self.r, self.x+self.r, self.y+self.r,
+        fill="black")
+        self.muzzle = self.canvas.create_line(self.x, self.y, self.x + self.l, self.y, width=5)
         self.health = 100
 
     def draw(self):
@@ -16,21 +24,39 @@ class Cannon():
 
     def targetting(self, event=0):
         if event:
-            self.angle = math.atan((event.y - 450) / (event.x - 20))
+            try:
+                self.angle = math.atan((event.y - self.y) / (event.x - self.x))
+            except ZeroDivisionError:
+                self.angle = math.pi/2
         if self.start:
-            canv.itemconfig(self.muzzle, fill='red')
+            self.canvas.itemconfig(self.muzzle, fill='red')
         else:
             self.canvas.itemconfig(self.muzzle, fill='black')
-            self.canvas.coords(self.muzzle, x1, x2, 20 + max(self.power, 20) * math.cos(self.angle),
-            450 + max(self.power, 20) * math.sin(self.angle))
+            if event.x > self.x:
+                self.canvas.coords(self.muzzle, self.x, self.y, self.x + self.l * math.cos(self.angle),
+                self.y + self.l * math.sin(self.angle))
+            else:
+                self.canvas.coords(self.muzzle, self.x, self.y, self.x - self.l * math.cos(self.angle),
+                self.y - self.l * math.sin(self.angle))
 
     def fire_start(self, event):
-        self.start = 1
+        if self.on:
+            self.start = 1
+
+    def stop(self):
+        self.start = 0
+        self.on = 0
 
     def fire_end(self, event):
-        self.angle = math.atan((event.y - new_ball.y) / (event.x - new_ball.x))
-        self.start = 0
-        self.power = 10
+        if self.on:
+            new_ball = Shell(self.canvas, self.k)
+            new_ball.x = self.x
+            new_ball.x = self.y
+            new_ball.vx = self.power * math.cos(self.angle)
+            new_ball.vy = -self.power * math.sin(self.angle)
+            self.start = 0
+            self.power = 10
+
     def power_up(self):
         if self.start:
             if self.power < 100:
