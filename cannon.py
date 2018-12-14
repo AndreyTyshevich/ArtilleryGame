@@ -14,8 +14,9 @@ class Cannon():
         self.r = 20
         self.l = 50
         self.k = k
+        self.balls = []
         self.carriage = self.canvas.create_oval(self.x-self.r, self.y-self.r, self.x+self.r, self.y+self.r,
-        fill="black")
+                                                fill="black")
         self.muzzle = self.canvas.create_line(self.x, self.y, self.x + self.l, self.y, width=5)
         self.health = 100
 
@@ -49,13 +50,13 @@ class Cannon():
 
     def fire_end(self, event):
         if self.on:
-            new_ball = Shell(self.canvas, self.k)
-            new_ball.x = self.x
-            new_ball.x = self.y
-            new_ball.vx = self.power * math.cos(self.angle)
-            new_ball.vy = -self.power * math.sin(self.angle)
+            vx = self.power * math.cos(self.angle)
+            vy = -self.power * math.sin(self.angle)
+            ball = Shell(self.canvas, self.x, self.y, vx, vy, self.k)
+            self.balls += [ball]
             self.start = 0
             self.power = 10
+
 
     def power_up(self):
         if self.start:
