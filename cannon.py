@@ -1,67 +1,94 @@
-from shell import *
 import math
+from tkinter import *
+from random import *
+
+screen_width = 1200
+screen_height = 700
+shell_radius = 10
+dt = 0.3
+g = -9.8
 
 
-class Cannon():
-    def __init__(self, canv, x, y, k):
-        self.canvas = canv
-        self.power = 10
-        self.start = 0
-        self.on = 1
-        self.angle = 1
-        self.x = x
-        self.y = y
-        self.r = 20
-        self.l = 50
+def screen(x, y):
+    return x, screen_height - y
+
+
+class Shell:
+    def __init__(self, x, y, r, Vx, Vy, canvas, k):
+        self.color = 'gray'
+        self.x, self.y, self.r = x, y, r
+        self.Vx, self.Vy = Vx, Vy
+        self._canvas = canvas
+        self.circle = canvas.create_oval(screen(x - r, y - r), screen(x + r, (y + r)), fill=self.color)
+        self.damage_radius = 40
+        self.damage = 10
         self.k = k
-        self.balls = []
-        self.carriage = self.canvas.create_oval(self.x-self.r, self.y-self.r, self.x+self.r, self.y+self.r,
+
+    def move(self):
+        ax = self.k
+        ay = g
+        self.x += self.Vx * dt
+        self.y += self.Vy * dt
+        self.Vx += ax * dt
+        self.Vy += ay * dt
+
+        x1, y1 = screen(self.x - self.r, self.y - self.r)
+        x2, y2 = screen(self.x + self.r, self.y + self.r)
+        self._canvas.coords(self.circle, x1, y1, x2, y2)
+
+    def check_collision(self, x, y):
+       l = ((self.x - x) ** 2 + (self.y - y) ** 2) ** 0.5
+       return l <= self.r
+
+    def destroy(self):
+        self._canvas.delete(self.circle)
+
+
+class Cannon:
+    max_cannon_length = 30
+
+    def __init__(self, x, y, canvas, k):
+        self._canvas = canvas
+        self.x, self.y = x, y
+        # self.power = 10
+        # self.on = 0 дописать
+        self.length_x = 0
+        self.length_y = -30
+        self.r = 20
+        self.cannon = self._canvas.create_line(screen(self.x, self.y,), screen(self.x + self.length_x, self.y + self.length_y),
+                                               width=7, fill='black', tag='cannon')
+        self.carriage = self._canvas.create_oval(screen(self.x - self.r, self.y-self.r), screen(self.x+self.r, self.y+self.r),
                                                 fill="black")
-        self.muzzle = self.canvas.create_line(self.x, self.y, self.x + self.l, self.y, width=5)
+        self.k = k
         self.health = 100
 
-    def draw(self):
-        pass
+    def target(self, x, y):
+        self.length_x = (x - self.x)
+        self.length_y = (y - self.y)
+        l = (self.length_x ** 2 + self.length_y ** 2) ** 0.5
+        self.length_x = self.max_cannon_length * self.length_x / l
+        self.length_y = self.max_cannon_length * self.length_y / l
 
-    def targetting(self, event=0):
-        if event:
-            try:
-                self.angle = math.atan((event.y - self.y) / (event.x - self.x))
-            except ZeroDivisionError:
-                self.angle = math.pi/2
-        if self.start:
-            self.canvas.itemconfig(self.muzzle, fill='red')
-        else:
-            self.canvas.itemconfig(self.muzzle, fill='black')
-            if event.x > self.x:
-                self.canvas.coords(self.muzzle, self.x, self.y, self.x + self.l * math.cos(self.angle),
-                self.y + self.l * math.sin(self.angle))
-            else:
-                self.canvas.coords(self.muzzle, self.x, self.y, self.x - self.l * math.cos(self.angle),
-                self.y - self.l * math.sin(self.angle))
+        x1, y1 = screen(self.x, self.y)
+        x2, y2 = screen(self.x + self.length_x, self.y + self.length_y)
+        self._canvas.delete('cannon')   # нужно исправить
+        self.cannon = self._canvas.create_line(x1, y1, x2, y2, width=7, fill='black', tag='cannon')
+        self._canvas.coords(self.cannon, x1, y1, x2, y2)
 
-    def fire_start(self, event):
-        if self.on:
-            self.start = 1
-
-    def stop(self):
-        self.start = 0
-        self.on = 0
-
-    def fire_end(self, event):
-        if self.on:
-            vx = self.power * math.cos(self.angle)
-            vy = -self.power * math.sin(self.angle)
-            ball = Shell(self.canvas, self.x, self.y, vx, vy, self.k)
-            self.balls += [ball]
-            self.start = 0
-            self.power = 10
-
-
+    # еще не дописана
     def power_up(self):
-        if self.start:
+        if self.on:
             if self.power < 100:
                 self.power += 1
-                canv.itemconfig(self.muzzle, fill='red')
+            self._canvas.itemconfig(self.cannon, fill='orange')
         else:
-            canv.itemconfig(self.muzzle, fill='black')
+            self._canvas.itemconfig(self.cannon, fill='black')
+
+    def shoot(self, x, y):
+        self.target(x, y)
+        Vx = self.length_x
+        Vy = self.length_y
+        return Shell(self.x + self.length_x, self.y + self.length_y, shell_radius, Vx, Vy, self._canvas, self.k)
+
+    def take_damage(self, damage):  #дописать
+        self.health -= damage
