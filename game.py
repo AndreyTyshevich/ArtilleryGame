@@ -76,6 +76,10 @@ class Start_game():
         shell = cannon.shoot(x, y)
         self.shells.append(shell)
 
+        cannon.take_damage(self)
+
+        print(cannon.health)
+
         self.game_state = GameState.SHELL_IS_FLYING
         canvas.after(sleep_time, self.shell_flying)
 
