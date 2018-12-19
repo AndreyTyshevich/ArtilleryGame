@@ -1,3 +1,4 @@
+#from PIL import Image, ImageTk
 import math
 from tkinter import *
 from random import *
@@ -7,7 +8,7 @@ screen_height = 700
 shell_radius = 10
 dt = 0.3
 g = -9.8
-
+#ball_image = ImageTk.PhotoImage(Image.open('bomb'))
 
 def screen(x, y):
     return x, screen_height - y
@@ -20,6 +21,7 @@ class Shell:
         self.Vx, self.Vy = Vx, Vy
         self._canvas = canvas
         self.circle = canvas.create_oval(screen(x - r, y - r), screen(x + r, (y + r)), fill=self.color)
+#        self.avatar = canvas.create_image(screen(x - r, y - r), screen(x + r, (y + r)), image=ball_image)
         self.damage_radius = 40
         self.damage = 10
         self.k = k
