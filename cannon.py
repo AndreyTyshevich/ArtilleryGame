@@ -17,7 +17,7 @@ class Shell:
     def __init__(self, x, y, r, Vx, Vy, canvas, k):
         self.color = 'gray'
         self.x, self.y, self.r = x, y, r
-        self.Vx, self.Vy = Vx, Vy
+        self.Vx, self.Vy = Vx*5, Vy*5
         self._canvas = canvas
         self.circle = canvas.create_oval(screen(x - r, y - r), screen(x + r, (y + r)), fill=self.color)
         self.damage_radius = 40
