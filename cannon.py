@@ -1,5 +1,6 @@
 import math
 from tkinter import *
+from tkinter import messagebox
 from random import *
 
 screen_width = 1200
@@ -41,26 +42,39 @@ class Shell:
        return l <= self.r
 
     def destroy(self):
-        self._canvas.delete(self.circle)
+        try:
+            self._canvas.delete(self.circle)
+        except:
+            pass
 
 
 class Cannon:
     max_cannon_length = 30
-
-    def __init__(self, x, y, canvas, k):
+    def __init__(self, x, y, canvas, k, root):
+        #print("Cannon canvas ", canvas)
         self._canvas = canvas
+        self._root = root
         self.x, self.y = x, y
         # self.power = 10
         # self.on = 0 дописать
         self.length_x = 0
         self.length_y = -30
+        self.text_id = -500
         self.r = 20
+        self.current_shell  = -500
         self.cannon = self._canvas.create_line(screen(self.x, self.y,), screen(self.x + self.length_x, self.y + self.length_y),
                                                width=7, fill='black', tag='cannon')
         self.carriage = self._canvas.create_oval(screen(self.x - self.r, self.y-self.r), screen(self.x+self.r, self.y+self.r),
                                                 fill="black")
         self.k = k
         self.health = 100
+        
+        if 50 <= self.x <= 550: 
+            self._canvas.create_text(100, 100, text="здоровье:")  # нужно изменять здоровье. для этого нужны попадания
+            self.text_id = self._canvas.create_text(150, 100, text=self.health)
+        else:
+            self._canvas.create_text(900, 100, text="здоровье:")
+            self.text_id = self._canvas.create_text(950, 100, text=self.health)
         '''
         canvas.create_text(100, 100, text="здоровье:")  # нужно изменять здоровье. для этого нужны попадания
         canvas.create_text(150, 100, text=self.health)
@@ -96,11 +110,19 @@ class Cannon:
         Vy = self.length_y
         return Shell(self.x + self.length_x, self.y + self.length_y, shell_radius, Vx, Vy, self._canvas, self.k)
 
-    def take_damage(self, damage):
-        damage = 25
+    def take_damage(self, damage = 25):
         self.health -= damage
+        #print("Self check id ", self._canvas.check_id)
+        self._canvas.itemconfig(self.text_id, text=self.health)
         if self.health <= 0:
-            self._canvas.create_text(100, 100, text="здоровье:")  # нужно изменять здоровье. для этого нужны попадания
-            self._canvas.create_text(150, 100, text=self.health)
-            self._canvas.create_text(900, 100, text="здоровье:")
-            self._canvas.create_text(950, 100, text=self.health)
+            self._canvas.delete("all")
+            self._canvas.destroy()
+            self._root.destroy()
+            infotext = " "
+            if 50 <= self.x <= 550:
+                infotext = "Right player wins"
+            else:
+                infotext = "Left player wins"
+            messagebox.showinfo("Game Over", infotext)
+            
+            

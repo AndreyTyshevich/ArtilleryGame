@@ -45,19 +45,21 @@ class Start_game():
 
         x = randint(50, 550)
         y = self.ground.height[round(x)]
-        self.gamer1 = Cannon(x, y, canvas, k)
-        self.cannons.append(Cannon(x, y, canvas, k))
+        self.gamer1 = Cannon(x, y, canvas, k, root)
+        self.cannons.append(self.gamer1)
 
         x = randint(750, 1150)
         y = self.ground.height[round(x)]
-        self.gamer2 = Cannon(x, y, canvas, k)
-        self.cannons.append(Cannon(x, y, canvas, k))
+        self.gamer2 = Cannon(x, y, canvas, k, root)
+        self.cannons.append(self.gamer2)
 
         self.current_player = 0
         self.shells = []
 
         canvas.bind("<Button-1>", self.mouse_click)
         canvas.bind("<Motion>", self.mouse_motion)
+        # self.check_id = canvas.create_text(600, 100, text="check")
+        # print("Right check id ", self.check_id)
         # root.bind('<Key>', self.move)
         self.game_state = GameState.TANK_IS_AIMING
 
@@ -75,8 +77,6 @@ class Start_game():
         cannon.target(x, y)
         shell = cannon.shoot(x, y)
         self.shells.append(shell)
-
-        cannon.take_damage(self)
 
         print(cannon.health)
 
@@ -97,6 +97,13 @@ class Start_game():
             if self.ground.check_collision(shell):
                 self.ground.explode(shell)
                 self.game_state = GameState.TANK_IS_AIMING
+        for shell in self.shells:
+            for cannon_object in self.cannons:
+                if self.ground.check_hit(shell, cannon_object):
+                    print("Hit is detected")
+                    cannon_object.take_damage()
+                    self.ground.explode(shell)
+                    self.game_state = GameState.TANK_IS_AIMING
         if self.game_state != GameState.SHELL_IS_FLYING:
             self.shells.clear()
 def start_game(event):
@@ -109,6 +116,7 @@ root = Tk()
 frame = Frame(root)
 root.geometry('1200x700')
 canv = Canvas(root)
+#print("Menu canvas ", canv)
 canv.pack(fill=BOTH, expand=1)
 photo = PhotoImage(file="logo.png")
 Label(root, image=photo).place(x=0, y=0)  # title
