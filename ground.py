@@ -67,7 +67,10 @@ class Ground:
          Функция проверяет столкновение снаяряда с землей
     """
     def check_collision(self, shell):
-        return (shell.y - shell.r) <= self.height[round(shell.x)]
+        if  shell.x < 0 or shell.x > 1199:
+            return True
+        else:
+            return (shell.y - shell.r) <= self.height[round(shell.x)]
 
     """
          Функция уменьшает координаты столбиков земли в радиусе поражения снаряда
