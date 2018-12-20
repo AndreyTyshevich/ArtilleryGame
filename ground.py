@@ -1,6 +1,4 @@
-from tkinter import *
 import random
-from math import *
 
 screen_width = 1200
 screen_height = 700
@@ -15,7 +13,7 @@ class Background:
         self._canvas = canvas
         self.draw()
 
-    def draw(self):
+    def draw(self):  # Отрисовка заднего фона
         mount_leftside = self._canvas.create_polygon(-50, 700, 300, 75, 300, 700, fill='gray40', outline='gray40')
         mount_rightside = self._canvas.create_polygon(300, 700, 300, 75, 650, 700, fill='gray45', outline='gray45')
         snow = self._canvas.create_polygon(230, 200, 300, 75, 370, 200, 330, 170, 300, 200, 275, 165, fill='white',
@@ -42,10 +40,7 @@ class Ground:
         self.canvas = canvas
         self.generate()
 
-    """
-        Генерируется список высот на момент запуска
-    """
-    def generate(self):
+    def generate(self):  # Метод генерирует список высот
         height = random.randint(self.min_height, self.max_height)
         i = 1
         for _ in range(1200):
@@ -57,25 +52,17 @@ class Ground:
                 dh = i * random.randint(0, 1)
             height += dh
 
-    """
-         Функция отрисовывает землю по списку высот
-    """
-    def draw(self):
+    def draw(self):  # По списку высот создается рельеф
         for i in range(1200):
             self.canvas.create_line(i, screen_height, screen(i, self.height[i]), width=5, fill='Sienna', tag='ground')
-    """
-         Функция проверяет столкновение снаяряда с землей
-    """
-    def check_collision(self, shell):
+
+    def check_collision(self, shell):  #проверка на столкновение с землей или вылет за экран
         if  shell.x < 0 or shell.x > 1199:
             return True
         else:
             return (shell.y - shell.r) <= self.height[round(shell.x)]
 
-    """
-         Функция возвращает логические значения, необходимые для уничтожения снаряда
-    """
-    def explode(self, shell):
+    def explode(self, shell):  # уничтожение снаряда
         shell.destroy()
 
     def damage(self): #дописать
