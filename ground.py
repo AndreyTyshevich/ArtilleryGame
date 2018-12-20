@@ -73,7 +73,7 @@ class Ground:
             return (shell.y - shell.r) <= self.height[round(shell.x)]
 
     """
-         Функция уменьшает координаты столбиков земли в радиусе поражения снаряда
+         Функция возвращает логические значения, необходимые для уничтожения снаряда
     """
     def explode(self, shell):
         shell.destroy()
