@@ -3,9 +3,7 @@ from cannon import *
 from flag import *
 
 from tkinter import *
-from math import *
 from random import randrange as randint, choice
-import time
 from enum import Enum
 
 sleep_time = 35
@@ -62,13 +60,13 @@ class Start_game():
         # root.bind('<Key>', self.move)
         self.game_state = GameState.TANK_IS_AIMING
 
-    def mouse_motion(self, event):
+    def mouse_motion(self, event):  # Метод описывает движение мышкой
         if self.game_state != GameState.TANK_IS_AIMING:
             return
         cannon = self.cannons[self.current_player]
         cannon.target(event.x, screen_height - event.y)
 
-    def mouse_click(self, event):
+    def mouse_click(self, event):  # Метод описывает клик мышкой
         if self.game_state != GameState.TANK_IS_AIMING:
             return
         cannon = self.cannons[self.current_player]
@@ -82,7 +80,7 @@ class Start_game():
 
         self.current_player = (self.current_player + 1) % 2
 
-    def shell_flying(self, *ignore):
+    def shell_flying(self, *ignore):  # Метод описывает полёт снаряда
         if self.game_state != GameState.SHELL_IS_FLYING:
             return
         canvas.after(sleep_time, self.shell_flying)
@@ -100,10 +98,12 @@ class Start_game():
             k = randint(-7, 7)
             self.flag.change_power(k)
 
+
 def start_game(event):
     root_window = Tk()
     Start_game(root_window)
     root_window.mainloop()
+
 
 root = Tk()
 frame = Frame(root)
@@ -113,6 +113,6 @@ canv.pack(fill=BOTH, expand=1)
 photo = PhotoImage(file="logo.png")
 Label(root, image=photo).place(x=0, y=0)  # title
 btn = Button(root, text="Start game",  width=30, height=5, bg="white", fg="black")
-btn.bind("<Button-1>",start_game)  # при нажатии ЛКМ на кнопку вызывается функция
+btn.bind("<Button-1>", start_game)  # при нажатии ЛКМ на кнопку вызывается функция
 btn.pack()
 root.mainloop()
