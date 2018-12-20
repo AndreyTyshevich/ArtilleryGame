@@ -36,22 +36,23 @@ class Start_game():
         Background(canvas)
         self.ground = Ground(canvas)
         self.ground.draw()
+        self.flag = 0
 
         x = randint(150, 1050)
         y = self.ground.height[round(x)]
-        k = randint( -4, 4)
+        k = 0
         flag = Flag(canvas, x, y, k)
-        flag.draw_flag()
+        self.flag = Flag(canvas, x, y, k)
 
         x = randint(50, 550)
         y = self.ground.height[round(x)]
-        self.gamer1 = Cannon(x, y, canvas, k)
-        self.cannons.append(Cannon(x, y, canvas, k))
+        self.gamer1 = Cannon(x, y, canvas)
+        self.cannons.append(Cannon(x, y, canvas))
 
         x = randint(750, 1150)
         y = self.ground.height[round(x)]
-        self.gamer2 = Cannon(x, y, canvas, k)
-        self.cannons.append(Cannon(x, y, canvas, k))
+        self.gamer2 = Cannon(x, y, canvas)
+        self.cannons.append(Cannon(x, y, canvas))
 
         self.current_player = 0
         self.shells = []
@@ -73,7 +74,7 @@ class Start_game():
         cannon = self.cannons[self.current_player]
         x, y = screen(event.x, event.y)
         cannon.target(x, y)
-        shell = cannon.shoot(x, y)
+        shell = cannon.shoot(x, y, self.flag.k)
         self.shells.append(shell)
 
         self.game_state = GameState.SHELL_IS_FLYING
@@ -96,7 +97,22 @@ class Start_game():
         if self.game_state != GameState.SHELL_IS_FLYING:
             self.shells.clear()
 
+            k = randint(-7, 7)
+            self.flag.change_power(k)
 
-root_window = Tk()
-window = Start_game(root_window)
-root_window.mainloop()
+def start_game(event):
+    root_window = Tk()
+    Start_game(root_window)
+    root_window.mainloop()
+
+root = Tk()
+frame = Frame(root)
+root.geometry('1200x700')
+canv = Canvas(root)
+canv.pack(fill=BOTH, expand=1)
+photo = PhotoImage(file="logo.png")
+Label(root, image=photo).place(x=0, y=0)  # title
+btn = Button(root, text="Start game",  width=30, height=5, bg="white", fg="black")
+btn.bind("<Button-1>",start_game)  # при нажатии ЛКМ на кнопку вызывается функция
+btn.pack()
+root.mainloop()
