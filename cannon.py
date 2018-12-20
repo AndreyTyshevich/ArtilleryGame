@@ -1,7 +1,3 @@
-import math
-from tkinter import *
-from random import *
-
 screen_width = 1200
 screen_height = 700
 shell_radius = 10
@@ -24,7 +20,7 @@ class Shell:
         self.damage = 10
         self.k = k
 
-    def move(self):
+    def move(self):  # Метод описывает характер изменения координат между отрисовками и перемещает снаряд
         ax = self.k
         ay = g
         self.x += self.Vx * dt
@@ -36,11 +32,7 @@ class Shell:
         x2, y2 = screen(self.x + self.r, self.y + self.r)
         self._canvas.coords(self.circle, x1, y1, x2, y2)
 
-    def check_collision(self, x, y):
-       l = ((self.x - x) ** 2 + (self.y - y) ** 2) ** 0.5
-       return l <= self.r
-
-    def destroy(self):
+    def destroy(self):  # Метод убирает снаряд с холста
         self._canvas.delete(self.circle)
 
 
@@ -55,10 +47,11 @@ class Cannon:
         self.length_x = 0
         self.length_y = -30
         self.r = 20
-        self.cannon = self._canvas.create_line(screen(self.x, self.y,), screen(self.x + self.length_x, self.y + self.length_y),
+        self.cannon = self._canvas.create_line(screen(self.x, self.y,), screen(self.x +
+                                                                               self.length_x, self.y + self.length_y),
                                                width=7, fill='black', tag='cannon')
-        self.carriage = self._canvas.create_oval(screen(self.x - self.r, self.y-self.r), screen(self.x+self.r, self.y+self.r),
-                                                fill="black")
+        self.carriage = self._canvas.create_oval(screen(self.x - self.r, self.y-self.r),
+                                                 screen(self.x+self.r, self.y+self.r), fill="black")
         self.health = 100
 
         '''
@@ -68,7 +61,7 @@ class Cannon:
         canvas.create_text(950, 100, text=self.health)
         '''
 
-    def target(self, x, y):
+    def target(self, x, y):  # Метод описывает наведение
         self.length_x = (x - self.x)
         self.length_y = (y - self.y)
         l = (self.length_x ** 2 + self.length_y ** 2) ** 0.5
@@ -77,7 +70,7 @@ class Cannon:
 
         x1, y1 = screen(self.x, self.y)
         x2, y2 = screen(self.x + self.length_x, self.y + self.length_y)
-        self._canvas.delete('cannon') 
+        self._canvas.delete('cannon')
         self.cannon = self._canvas.create_line(x1, y1, x2, y2, width=7, fill='black', tag='cannon')
         self._canvas.coords(self.cannon, x1, y1, x2, y2)
 
@@ -90,11 +83,13 @@ class Cannon:
         else:
             self._canvas.itemconfig(self.cannon, fill='black')
 
-    def shoot(self, x, y, k):
+    def shoot(self, x, y, k):  # Метод описывает выстрел
         self.target(x, y)
         Vx = self.length_x
         Vy = self.length_y
         return Shell(self.x + self.length_x, self.y + self.length_y, shell_radius, Vx, Vy, self._canvas, k)
+
+
 '''
     def take_damage(self, damage):
         damage = 25
