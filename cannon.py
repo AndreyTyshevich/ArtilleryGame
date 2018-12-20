@@ -17,7 +17,7 @@ class Shell:
     def __init__(self, x, y, r, Vx, Vy, canvas, k):
         self.color = 'gray'
         self.x, self.y, self.r = x, y, r
-        self.Vx, self.Vy = Vx, Vy
+        self.Vx, self.Vy = 5*Vx, 5*Vy
         self._canvas = canvas
         self.circle = canvas.create_oval(screen(x - r, y - r), screen(x + r, (y + r)), fill=self.color)
         self.damage_radius = 40
@@ -47,7 +47,7 @@ class Shell:
 class Cannon:
     max_cannon_length = 30
 
-    def __init__(self, x, y, canvas, k):
+    def __init__(self, x, y, canvas):
         self._canvas = canvas
         self.x, self.y = x, y
         # self.power = 10
@@ -59,8 +59,14 @@ class Cannon:
                                                width=7, fill='black', tag='cannon')
         self.carriage = self._canvas.create_oval(screen(self.x - self.r, self.y-self.r), screen(self.x+self.r, self.y+self.r),
                                                 fill="black")
-        self.k = k
         self.health = 100
+
+        '''
+        canvas.create_text(100, 100, text="здоровье:")  # нужно изменять здоровье. для этого нужны попадания
+        canvas.create_text(150, 100, text=self.health)
+        canvas.create_text(900, 100, text="здоровье:")
+        canvas.create_text(950, 100, text=self.health)
+        '''
 
     def target(self, x, y):
         self.length_x = (x - self.x)
@@ -71,7 +77,7 @@ class Cannon:
 
         x1, y1 = screen(self.x, self.y)
         x2, y2 = screen(self.x + self.length_x, self.y + self.length_y)
-        self._canvas.delete('cannon')   # нужно исправить
+        self._canvas.delete('cannon') 
         self.cannon = self._canvas.create_line(x1, y1, x2, y2, width=7, fill='black', tag='cannon')
         self._canvas.coords(self.cannon, x1, y1, x2, y2)
 
@@ -84,11 +90,18 @@ class Cannon:
         else:
             self._canvas.itemconfig(self.cannon, fill='black')
 
-    def shoot(self, x, y):
+    def shoot(self, x, y, k):
         self.target(x, y)
         Vx = self.length_x
         Vy = self.length_y
-        return Shell(self.x + self.length_x, self.y + self.length_y, shell_radius, Vx, Vy, self._canvas, self.k)
-
-    def take_damage(self, damage):  #дописать
+        return Shell(self.x + self.length_x, self.y + self.length_y, shell_radius, Vx, Vy, self._canvas, k)
+'''
+    def take_damage(self, damage):
+        damage = 25
         self.health -= damage
+        if self.health <= 0:
+            self._canvas.create_text(100, 100, text="здоровье:")  # нужно изменять здоровье. для этого нужны попадания
+            self._canvas.create_text(150, 100, text=self.health)
+            self._canvas.create_text(900, 100, text="здоровье:")
+            self._canvas.create_text(950, 100, text=self.health)
+'''
