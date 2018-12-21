@@ -71,10 +71,10 @@ class Start_game():
         cannon = self.cannons[self.current_player]
         cannon.target(event.x, screen_height - event.y)
 
-    def buy_health(self):
+    def buy_health(self, event):
         cannon = self.cannons[self.current_player]
         if cannon.money >= 20:
-            cannon.heal_up()
+            cannon.armor_up()
             cannon.spend_points()
 
     def mouse_click(self, event):  # Метод описывает клик мышкой
