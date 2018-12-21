@@ -56,8 +56,8 @@ class Ground:
         for i in range(1200):
             self.canvas.create_line(i, screen_height, screen(i, self.height[i]), width=5, fill='Sienna', tag='ground')
 
-    def check_collision(self, shell):  #проверка на столкновение с землей или вылет за экран
-        if  shell.x < 0 or shell.x > 1199:
+    def check_collision(self, shell):  # проверка на столкновение с землей или вылет за экран
+        if shell.x < 0 or shell.x > 1199:
             return True
         else:
             return (shell.y - shell.r) <= self.height[round(shell.x)]
@@ -65,5 +65,5 @@ class Ground:
     def explode(self, shell):  # уничтожение снаряда
         shell.destroy()
 
-    def damage(self): #дописать
-        return self.damage
+    def check_direct_hit(self, shell, cannon):
+        return ((shell.x - cannon.x) ** 2 + (shell.y - cannon.y) ** 2)**0.5 <= cannon.r + shell.damage_radius
