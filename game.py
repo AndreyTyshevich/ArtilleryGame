@@ -39,12 +39,12 @@ class Start_game():
         Background(canvas)'''
 
         photo = PhotoImage(file="backgr.png")
-        canvas.create_image(600,350, anchor=CENTER, image=photo)
+        canvas.create_image(600, 350, anchor=CENTER, image=photo)
         label = Label(image=photo)
         label.image = photo
 
         photo = PhotoImage(file="sun.png")
-        canvas.create_image(1000,100, anchor=CENTER, image=photo)
+        canvas.create_image(1000, 100, anchor=CENTER, image=photo)
         label = Label(image=photo)
         label.image = photo
 
@@ -54,6 +54,31 @@ class Start_game():
 
         photo = PhotoImage(file="123456.png")
         canvas.create_image(800, 280, anchor=CENTER, image=photo)
+        label = Label(image=photo)
+        label.image = photo
+
+        photo = PhotoImage(file="f2.png")
+        canvas.create_image(100, 650, anchor=CENTER, image=photo)
+        label = Label(image=photo)
+        label.image = photo
+
+        photo = PhotoImage(file="f2.png")
+        canvas.create_image(700, 550, anchor=CENTER, image=photo)
+        label = Label(image=photo)
+        label.image = photo
+
+        photo = PhotoImage(file="f3.png")
+        canvas.create_image(1000, 580, anchor=CENTER, image=photo)
+        label = Label(image=photo)
+        label.image = photo
+
+        photo = PhotoImage(file="bb.png")
+        canvas.create_image(500, 50, anchor=CENTER, image=photo)
+        label = Label(image=photo)
+        label.image = photo
+
+        photo = PhotoImage(file="f1.png")
+        canvas.create_image(400, 630, anchor=CENTER, image=photo)
         label = Label(image=photo)
         label.image = photo
 
